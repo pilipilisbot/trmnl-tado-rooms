@@ -1,6 +1,10 @@
 {
-  "generated_at": "2026-04-10T14:59:25.079610+00:00",
-  "source": "tado",
+  "generated_at": "2026-04-10T15:10:00Z",
+  "source": "tado-api",
+  "home": {
+    "id": 123456,
+    "name": "Casa"
+  },
   "summary": {
     "room_count": 6,
     "average_temperature_c": 18.9,
@@ -8,47 +12,11 @@
     "warmest_room": "Habitació papes"
   },
   "rooms": [
-    {
-      "name": "Menjador",
-      "temperature_c": 19.7,
-      "humidity": 64,
-      "power": "OFF",
-      "target": null
-    },
-    {
-      "name": "Cuina",
-      "temperature_c": 19.0,
-      "humidity": 63,
-      "power": "OFF",
-      "target": null
-    },
-    {
-      "name": "Habitació papes",
-      "temperature_c": 20.1,
-      "humidity": 61,
-      "power": "OFF",
-      "target": null
-    },
-    {
-      "name": "Habitació nenis",
-      "temperature_c": 18.4,
-      "humidity": 70,
-      "power": "OFF",
-      "target": null
-    },
-    {
-      "name": "Lavabo",
-      "temperature_c": 19.0,
-      "humidity": 68,
-      "power": "OFF",
-      "target": null
-    },
-    {
-      "name": "Estudi",
-      "temperature_c": 17.4,
-      "humidity": 64,
-      "power": "OFF",
-      "target": null
-    }
+    {"name": "Menjador", "temperature_c": 19.6, "humidity": 65, "power": "OFF", "target": null},
+    {"name": "Cuina", "temperature_c": 18.9, "humidity": 63, "power": "OFF", "target": null},
+    {"name": "Habitació papes", "temperature_c": 20.1, "humidity": 61, "power": "OFF", "target": null},
+    {"name": "Habitació nenis", "temperature_c": 18.3, "humidity": 70, "power": "OFF", "target": null},
+    {"name": "Lavabo", "temperature_c": 18.9, "humidity": 69, "power": "OFF", "target": null},
+    {"name": "Estudi", "temperature_c": 17.4, "humidity": 64, "power": "OFF", "target": null}
   ]
 }

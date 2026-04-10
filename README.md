@@ -4,60 +4,99 @@ Plugin privat per **TRMNL** que mostra les temperatures i humitat de les habitac
 
 Repo: https://github.com/pilipilisbot/trmnl-tado-rooms
 
+## Què canvia ara
+
+Aquest repo ja **no depèn** del script local `pilipilis_tado.py`.
+Ara parla **directament amb l'API de Tado**.
+
 ## Què inclou
 
-- `fetch_tado_rooms.py`: script que extreu l'estat actual de Tado i genera JSON
-- `rooms_sample.json`: exemple real del payload que consumirà TRMNL
+- `fetch_tado_rooms.py`: client standalone que consulta l'API de Tado i genera JSON
+- `rooms_sample.json`: exemple del payload que consumirà TRMNL
 - `example_template.liquid`: template base perquè el plugin es vegi bé a TRMNL
 
-## Com funciona
-
-L'estratègia recomanada per a TRMNL és:
-
-1. generar o servir un JSON HTTP amb les dades de Tado
-2. crear un **Private Plugin** a TRMNL amb estratègia **Polling**
-3. enganxar el template Liquid del repo
-
-Això és més simple i mantenible que intentar incrustar la lògica de Tado dins del plugin.
-
-## 1. Generar el JSON
-
-Executa:
+## Variables d'entorn necessàries
 
 ```bash
+export TADO_USERNAME="tu-email-tado"
+export TADO_PASSWORD="la-teva-password-tado"
+export TADO_HOME_ID="123456"
+```
+
+### Opcional
+
+```bash
+export TADO_CLIENT_ID="tado-web-app"
+export TADO_CLIENT_SECRET=""
+```
+
+En la majoria de casos, amb `TADO_USERNAME`, `TADO_PASSWORD` i `TADO_HOME_ID` n'hi ha prou.
+
+## Instal·lació local
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install requests
 python3 fetch_tado_rooms.py > rooms.json
 ```
 
-## 2. Publicar el JSON perquè TRMNL el pugui llegir
+## Exemple de payload
 
-TRMNL amb **Polling** necessita una URL accessible per HTTP/HTTPS.
-
-Opcions fàcils:
-- GitHub Pages o qualsevol hosting estàtic, si publiques un `rooms.json`
-- petit endpoint propi
-- Cloudflare Worker / Vercel / PythonAnywhere / GitHub Action que regeneri el fitxer
-
-Exemple d'URL final:
-
-```text
-https://example.com/tado/rooms.json
+```json
+{
+  "generated_at": "2026-04-10T15:00:00Z",
+  "source": "tado-api",
+  "home": {
+    "id": 123456,
+    "name": "Casa"
+  },
+  "summary": {
+    "room_count": 6,
+    "average_temperature_c": 18.9,
+    "coldest_room": "Estudi",
+    "warmest_room": "Habitació papes"
+  },
+  "rooms": [
+    {
+      "name": "Menjador",
+      "temperature_c": 19.6,
+      "humidity": 65,
+      "power": "OFF",
+      "target": null
+    }
+  ]
+}
 ```
 
-## 3. Crear el plugin a TRMNL
+## Com fer-lo servir a TRMNL
+
+L'estratègia recomanada és **Private Plugin + Polling**.
+
+### Pas 1. Publica el JSON en una URL pública
+
+TRMNL necessita llegir una URL HTTP/HTTPS.
+
+Opcions:
+- endpoint teu
+- Cloudflare Worker
+- Vercel
+- GitHub Action + GitHub Pages
+- qualsevol hosting estàtic o petit backend
+
+### Pas 2. Crea el plugin a TRMNL
 
 A TRMNL:
 
-1. Ves a **Plugins**
-2. Crea un **Private Plugin**
-3. Tria estratègia **Polling**
-4. A **Polling URL(s)** posa la URL del teu `rooms.json`
-5. Desa el plugin
-6. Ves a **Edit Markup**
-7. Enganxa el contingut de `example_template.liquid`
+1. ves a **Plugins**
+2. crea un **Private Plugin**
+3. tria **Polling** com a strategy
+4. posa la URL pública del `rooms.json`
+5. desa el plugin
+6. ves a **Edit Markup**
+7. enganxa el contingut de `example_template.liquid`
 
-## 4. Variables que farà servir el template
-
-Com que el Polling retorna JSON, podràs usar directament:
+### Pas 3. Usa aquestes variables al template
 
 - `summary.average_temperature_c`
 - `summary.room_count`
@@ -66,6 +105,7 @@ Com que el Polling retorna JSON, podràs usar directament:
 - `rooms`
 - `rooms[0].name`
 - `rooms[0].temperature_c`
+- `rooms[0].humidity`
 
 ## Template base
 
@@ -94,16 +134,15 @@ Com que el Polling retorna JSON, podràs usar directament:
 
 ## Publicació automàtica recomanada
 
-Si vols que sigui usable de veritat, el següent pas és muntar una automatització que:
-
-- executi `fetch_tado_rooms.py`
-- publiqui `rooms.json` a una URL pública
-- refresqui periòdicament
+Perquè sigui útil cada dia, el normal és executar `fetch_tado_rooms.py` periòdicament i publicar el JSON.
 
 Per exemple cada 5 o 10 minuts.
 
 ## Notes
 
-- Aquest repo no publica secrets.
-- El script depèn del wrapper local `pilipilis_tado.py` del host on s'executa.
-- Si vols fer-ho portable, el següent pas és desacoblar-lo i parlar directament amb l'API de Tado o amb un endpoint teu intermedi.
+- Aquest repo no necessita el wrapper local de Pilipilis.
+- Ara és un client standalone contra Tado.
+- El següent pas natural, si vols fer-lo realment desplegable, és afegir-li:
+  - `requirements.txt`
+  - `.env.example`
+  - GitHub Action o petit deploy per publicar `rooms.json`
