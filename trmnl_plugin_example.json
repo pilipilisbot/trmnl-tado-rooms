@@ -1,0 +1,5 @@
+{
+  "name": "Tado Rooms",
+  "description": "Shows current temperatures and humidity from Tado rooms",
+  "data_url": "https://example.com/tado/rooms.json"
+}
