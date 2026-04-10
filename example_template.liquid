@@ -1,0 +1,20 @@
+<div class="layout layout--col gap--space-between">
+  <div>
+    <div class="text--xxsmall text--subtle">Tado · Habitacions</div>
+    <div class="text--small">Mitjana {{ summary.average_temperature_c }}°C · {{ summary.room_count }} estances</div>
+  </div>
+
+  <div class="grid grid--cols-2 gap--small">
+    {% for room in rooms limit:6 %}
+    <div class="item">
+      <div class="text--xsmall text--subtle">{{ room.name }}</div>
+      <div class="text--large">{{ room.temperature_c }}°</div>
+      <div class="text--xxsmall">Hum {{ room.humidity }}%{% if room.power == 'ON' %} · 🔥{% endif %}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="text--xxsmall text--subtle">
+    Freda: {{ summary.coldest_room }} · Calenta: {{ summary.warmest_room }}
+  </div>
+</div>
